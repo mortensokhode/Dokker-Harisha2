@@ -10,8 +10,6 @@ body {
   font-family: Roboto, Inter, sans-serif;
   font-size: 16px;
   font-variant-caps: small-caps ;
-  /* font-variant-caps: unicase ; */
-  /* font-variant-caps: titling-caps ; */
   max-width: 1600px;
 
   background: var(--mainBackground);
@@ -96,25 +94,29 @@ h1, h2 {
   align-content: space-between;
 }
 
+.sectionText {
+  margin: 5px 10px;
+}
+
+
+.loginText {
+  margin: 15px 10px;
+}
 
 #audiovisual-div {
   position: absolute;
   display: none;
-
-  z-index: 700;
 }
 
 #textbased-div {
   position: auto;
   display: flex;
-  
-  z-index: 700;
 }
 
 .oppgaveSection01 {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .oppgaveSection01, .fullWidthSection {
@@ -132,7 +134,6 @@ h1, h2 {
   z-index: 700;
 }
 
-
 .topFrame, .bottomFrame {
   padding:0;
   margin:0;
@@ -145,7 +146,7 @@ h1, h2 {
   position: absolute;
   height: var(--androidTopFrame);
   top: 0;
-  background-image: url('image/topFrameBG.jpg');
+  background-image: url('image/topFrameBG2.jpg');
   border-radius: 15px 15px 0 0;
   animation-name: slideup1;
 }
@@ -181,8 +182,6 @@ h1, h2 {
   100% {
     transform: translateY(0%);
   }}
-    
-  
 
 .invisibleButton {
   position: absolute;
@@ -227,8 +226,8 @@ h1, h2 {
   }
     
 #botframesect-elm {
-  right: -22vw;
-  bottom: -18vw;
+  right: -44vw;
+  bottom: -25vw;
   animation-duration: 1s;
   animation-name: slideInPlace;
 }
@@ -236,7 +235,7 @@ h1, h2 {
 @keyframes slideInPlace {
   0% {
     /* transform: translateY(-100%); */
-    transform: translateX(-200%);
+    transform: translateX(-400%);
   }
   100% {
     /* transform: translateY(0%); */
@@ -244,8 +243,8 @@ h1, h2 {
   }}
 
 #error-msg {
-  right: 18vw;
-  top: 5vw;
+  left: 22vw;
+  top: 2vw;
   animation-duration: 1s;
   animation-name: slideInPlace;
 }  
@@ -315,5 +314,13 @@ h1, h2 {
   height: 25px;
   margin-top: 10px;
   color: var(--lightText);
-  opacity: 0.4;
+  opacity: 0.6;
+}
+
+.responsiveImg {
+  position: auto;
+  margin: 15px 0px 10px 10;
+  padding-top:10px;
+  width: 8vw;
+  height: auto;
 }

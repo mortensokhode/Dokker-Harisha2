@@ -1,3 +1,4 @@
+//import axios from 'axios'
 // DOM elements are for a great part done here, some elements are generated
 // further down, closer to it's actual use.
 //  --------------------------------------------------------------
@@ -15,33 +16,49 @@ const audiovisualElm = document.getElementById("audiovisual-div")
 const textbasedElm = document.getElementById("textbased-div")
 const invbuttonElm = document.getElementById("invbutton-elm")
 const outerframeElm = document.getElementById("outerframe-elm")
+const oppgavesection2Elm = document.getElementById("oppgavesection3-elm")
+const oppgavesection3Elm = document.getElementById("oppgave3-div")
+const avatarElm = document.getElementById("avatar-elm")
 
-// DOM constants in 'pause' mode.
-// ---------------------------------------------------------------------
-// const fileInputElm = document.getElementById("fileBrowse")
-// const textelement01Elm = document.getElementById("textelement01") 
-// const textelement02Elm = document.getElementById("textelement02") 
-// const oppgavesection1Elm = document.getElementById("oppgavesection1-elm")
-// const oppgavesection2Elm = document.getElementById("oppgavesection2-elm")
-// const oppgavesection3Elm = document.getElementById("oppgavesection3-elm")
-// const divFrameElements= document.querySelectorAll("div")
-// const sectFrameElements= document.querySelectorAll("section")
-// ---------------------------------------------------------------------
+const myUrl = 'https://api.github.com/users/mortensokhode'
+
+const headerArray = ['avatar_url',
+                     'created_at',
+                     'html_url',
+                     'name',
+                     'public_rep',
+                     'repos_url',
+                     'updated_at']
 
 
 // Global vars 
 let currentWindow = location.pathname.slice(1) 
-let fileList = []
+
+var plusOne = makeAdder(1)
+var plusTen = makeAdder(10)
+
+document.getElementById("plusOne").textContent = `plusOne(4):  ${plusOne(4)}`
+document.getElementById("plusTen").textContent = `plusTen(4):  ${plusTen(4)}`
+
+var authorizedUser = User()
+var loginName = 'Morten'
+var passWord = 'holyShit3'
+var loginMessage = authorizedUser.login(loginName, passWord)
+var myLoginElm = document.getElementById("myLogin")
+
+myLoginElm.innerHTML = `authorizedUser.login(${loginName}, ${passWord}):  ${loginMessage}<br />`
+console.log('authorizedUser: ',authorizedUser)
 
 //  --------------------------------------------------------------
 // Program Main:
 //  --------------------------------------------------------------
-pageHeadingElm.textContent = `Current page:  ${currentWindow}`
 
+fetchGithubData(myUrl)
+pageHeadingElm.textContent = `Current page:  ${currentWindow}`
 
 // Toggle buttons initial textContent
 toggle01Btn.textContent  = "Audiovisual page"
-toggle02Btn.textContent = "Toggle error msg"
+toggle02Btn.textContent  = "Toggle error msg"
 
 // Used prior to this exercise, and still used  for the audio visual part
 seasontextElm.innerHTML = `The text will reflect the chosen season.<br><br> ...and btw, chosen season will provide a matching piece of music to be played.`
@@ -68,7 +85,7 @@ toggle01Btn.addEventListener("click", function() {
 
 // toggle an error message example - visual message on/off
 toggle02Btn.addEventListener("click", function() {
-  toggleVisibility(errorMsg, 'block')
+  toggleVisibility(errorMsg, 'inline-block')
 })
 
 // ----------------------------------------------
@@ -96,12 +113,12 @@ seasonInput.addEventListener("change", function() {
 
 invbuttonElm.addEventListener("mouseover", () => {
   const botframesectElm = document.getElementById("botframesect-elm")
-  toggleVisibility(botframesectElm, 'block')
+  toggleVisibility(botframesectElm, 'inline-block')
 })
 
 invbuttonElm.addEventListener("mouseleave", () => {
   const botframesectElm = document.getElementById("botframesect-elm")
-  toggleVisibility(botframesectElm, 'block')
+  toggleVisibility(botframesectElm, 'inline-block')
 })
 
 //  --------------------------------------------------------------
@@ -179,4 +196,88 @@ function printFrameHeading(DOMelementParent, CRelementType, frameType) {
   frameHeadingElm.innerHTML = `${frameType} name: ${frameElementParent.id}`
   frameElementParent.appendChild(frameHeadingElm)
 }
+
+function makeAdder(x) {
+  function Add(y) {
+    return x + y
+  }
+
+  return Add
+}
+
+// Just another test of JS' closure functionality - this time using 
+function User() {
+  var userName, passWord
+  var bLogin 
+
+    function doLogin(user, pw) {
+      userName = user
+      passWord = pw
+
+      // and whatever one wants to do during the login follow between these lines
+      sLogin = ((new Date().getTime() % 2) === 0) ? `${userName} has been logged on` : `${userName} has NOT been logged on`
+      
+      return sLogin
+      // ...and then the login part is over
+    }
+
+    var publicAPI = {
+      login: doLogin
+    }
+
+    return publicAPI
+}
+
+
+let githubDetails = []
+
+async function fetchGithubData(urLocator) {
+  // read github header data
+  const response = await fetch(urLocator);
+  const data = await response.json();
+
+  const repoResponse = await fetch(data.repos_url);
+  const repoData = await repoResponse.json();
+
+  console.log('Object.getOwnPropertyNames(repoData): ', Object.getOwnPropertyNames(repoData))
+  console.log('Object.getOwnPropertyNames(repoData).length: ', Object.getOwnPropertyNames(repoData).length)
+  // render
+  repoData.forEach((githubObject) => {
+    githubDetails.push(`Name: ${githubObject.full_name} <br />
+    Url: ${githubObject.url} <br />
+    Created: ${githubObject.created_at} <br />
+    Updated: ${githubObject.updated_at} <br />
+    Visibility: ${githubObject.visibility} <br />
+    Default branch: ${githubObject.default_branch} <br />
+    Size: ${githubObject.size} <br />
+    Main language: ${githubObject.language} <br />`)
+  })
+    
+  renderRepositoryData(data, githubDetails)
+}
+
+
+function renderRepositoryData(reposHeader, reposDetails) {
+    Object.entries(reposHeader).forEach(function([key, value]) {
+      var elementText = `${key}: ${value}`
+      var sValue = value
+    
+      if (headerArray.includes(key)) {
+          if (key === 'avatar_url') {
+            avatarElm.setAttribute("src", sValue)
+          }
+          else {
+            addOppgaveContent(oppgavesection2Elm, elementText, 'P')
+          }
+      }
+    })
+    
+    reposDetails.forEach((value) => ( addOppgaveContent(oppgavesection3Elm, value, 'P')
+    ))
+}
+
+
+
+
+
 
